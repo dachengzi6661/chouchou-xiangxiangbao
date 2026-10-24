@@ -1,0 +1,25 @@
+# ============================================================
+# 本地真实配置：可能含 MCP Token，永远不要提交
+# 用法：把本文件复制成 mcp-config.json 再填真实值，或直接配到
+#       ~/.workbuddy/mcp.json（仓库外），本仓库只保留 .example
+# ============================================================
+mcp-config.json
+mcp-config.local.json
+.env
+.env.*
+*.token
+*.secret
+*.pem
+*.key
+
+# 依赖与构建产物
+node_modules/
+out/
+dist/
+shots/
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

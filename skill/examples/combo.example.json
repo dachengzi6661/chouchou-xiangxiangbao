@@ -1,0 +1,36 @@
+{
+  "store": {
+    "storeCode": "1950564",
+    "storeName": "麦当劳北京建外SOHO(A座)餐厅"
+  },
+  "generatedAt": "2026-10-24 19:03",
+  "items": [
+    {
+      "code": "1100",
+      "detailName": "巨无霸",
+      "nutritionName": "巨无霸",
+      "subtotalFen": 2550,
+      "kcal": 513
+    },
+    {
+      "code": "1440",
+      "detailName": "麦辣鸡腿汉堡",
+      "nutritionName": "麦辣鸡腿汉堡",
+      "subtotalFen": 2250,
+      "kcal": 485
+    },
+    {
+      "code": "4810",
+      "detailName": "中薯条",
+      "nutritionName": "中薯条",
+      "subtotalFen": 1350,
+      "kcal": 289
+    }
+  ],
+  "source": {
+    "store": "query-nearby-stores",
+    "items": "query-meals + query-meal-detail",
+    "subtotalFen": "calculate-price → data.productList[].subtotal",
+    "kcal": "list-nutrition-foods → energyKcal"
+  }
+}
