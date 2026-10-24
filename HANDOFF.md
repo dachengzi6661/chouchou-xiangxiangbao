@@ -39,7 +39,7 @@
 |---|---|---|---|
 | 1 | 统一改名并推送 | 已完成 | 新 Pages 已通过线上验收，见第 14 节 |
 | 2 | 录 30 秒屏 | ⬜ **已做** | 脚本在 `SUBMISSION.md` 第二节 |
-| 3 | 发报名 Issue | ⬜ **未做** | 文案见第 5 节，2026-10-24 改名前核验：本账号尚无报名 Issue |
+| 3 | 发报名 Issue | 已提交，待官方校验 | https://github.com/M-China/mcd-developer-innovation-challenge/issues/1287 |
 | 4 | 把 Issue 链接回填到报名表 | ⬜ **未做** | 表单字段「麦当劳大赛报名 Issue 链接」 |
 | 5 | 上传 `workbuddy.md`（可选） | ⬜ 已做 | 仓库里已有，表单传不传都行 |
 
@@ -255,3 +255,12 @@ gh api repos/dachengzi6661/chouchou-xiangxiangbao/pages --jq .status
 - 显式 PAGE_URL 测线上：Chrome **64/64**，控制台 / 页面异常为 0；1000 次命名平均 **0.018 ms/次**。
 - index、data / logic / app、docs 三张 PNG、词库来源文档、官方声明均返回 200，且与本地逐字节一致；声明 MD5 保持 `91a7b32ec28098b609ca3f215cdf7147`。
 - 发布前敏感信息扫描 **22 个文件 0 命中**；报名 Issue / 表单仍未代发，原有 MCP 只读边界保持。
+
+## 17. 2026-10-24 参赛 Issue 已提交
+
+- 用户明确授权提交 Issue 并将报名表所需链接贴在聊天中。已用账号 dachengzi6661 发布官方仓库 Issue **#1287**：<https://github.com/M-China/mcd-developer-innovation-challenge/issues/1287>。
+- 标题为「【参赛申请】抽抽想香堡」；正文严格四行，项目名称 / 项目地址 / 项目简介的字段名和值写在同一行，项目地址使用纯 URL。提交后核验为 OPEN，官方自动校验尚未回复。
+- 官方 README 的标题要求是自定义报名标题，正文必须包含「【参赛申请】」；本项目继续用标题前缀便于检索。不要把此前标题前缀写成官方硬性要求。
+- 官方说明不要将字段标题和值分行，也不要把项目地址组织成 Markdown 链接；本次已遵守。
+- 报名表使用说明链接可填 <https://github.com/dachengzi6661/chouchou-xiangxiangbao/blob/main/README.md>；Pages 与 README 已核验 200。用户后续自行回填表单，未代填或提交表单。
+- 再次接手时先查看 #1287 的官方反馈，避免重复创建报名 Issue。

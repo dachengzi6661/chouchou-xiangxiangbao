@@ -2,6 +2,10 @@
 
 > 这份文件是给你自己用的提交清单，不参与评审。四份必需文件见 README 的「项目结构」。
 
+已提交参赛 Issue：<https://github.com/M-China/mcd-developer-innovation-challenge/issues/1287>。当前等待官方自动校验回复；报名表仍需回填。
+
+使用说明链接：<https://github.com/dachengzi6661/chouchou-xiangxiangbao/blob/main/README.md>。
+
 ---
 
 ## 一、提交说明（可直接粘到报名 Issue 正文）
@@ -14,7 +18,7 @@
 
 <https://github.com/M-China/mcd-developer-innovation-challenge/issues/new>
 
-打开后填标题和正文，提交即可。这个仓库没有 Issue 模板，靠标题前缀识别，所以**标题必须以「【参赛申请】」开头**。
+打开后填标题和正文，提交即可。官方允许自定义标题；正文必须包含「【参赛申请】」。本项目沿用带前缀标题，便于识别。字段名与内容保持同行，项目地址使用纯 URL。
 
 ### 标题与正文（直接复制）
 
@@ -28,12 +32,9 @@
 
 ```text
 【参赛申请】
-
 项目名称：抽抽想香堡
-
 项目地址：https://github.com/dachengzi6661/chouchou-xiangxiangbao
-
-项目简介：不做下单，只做玩梗。从门店真实在售单品里选 2–4 个本地拼成官方没有的隐藏款，用 calculate-price 官方核价、营养表求和算热量，再按「完整食物词 → 有条件热梗句式 → 配对口号」起个抽象名并出海报，可投票进「最离谱 / 最划算」双榜。演示版零配置在线体验，Skill 版真实调 MCP，全程只读不下单。
+项目简介：不做下单，只做玩梗。从麦当劳门店真实在售单品中选 2–4 个，拼成用户 DIY 隐藏款：用 calculate-price 官方核价、营养表求和算热量，再按完整食物词和有条件的热梗句式生成名字、配对口号及海报，可投票进入「最离谱／最划算」双榜。网页演示版使用真实接口静态快照、零配置体验；WorkBuddy Skill 版实际调用麦当劳 MCP，全程只读不下单。在线体验：https://dachengzi6661.github.io/chouchou-xiangxiangbao/；使用说明见项目 README。
 ```
 
 ### 提交后
