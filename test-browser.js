@@ -27,7 +27,8 @@ if (!CHROME) {
 }
 const PORT = 9333;
 const OUT = path.join(__dirname, 'shots');
-const PAGE = 'file:///' + path.join(__dirname, 'index.html').replace(/\\/g, '/');
+// 默认测本地文件；传 PAGE_URL 可以直接测线上（如 GitHub Pages）
+const PAGE = process.env.PAGE_URL || ('file:///' + path.join(__dirname, 'index.html').replace(/\\/g, '/'));
 
 if (!fs.existsSync(OUT)) fs.mkdirSync(OUT);
 
@@ -236,6 +237,7 @@ function getJSON(url) {
   const href = await evaluate("document.querySelector('.star a.go').getAttribute('href')");
   ok(/^https:\/\/github\.com\//.test(href), 'Star 链接指向 GitHub 且为占位地址', href);
   ok(await evaluate("document.querySelector('.star a.go').getAttribute('target')") === '_blank', '新窗口打开、不打断玩法');
+  ok(await evaluate("!document.querySelector('.star .warn')"), '「地址待填」角标已消失（REPO_READY=true）');
 
   console.log('\n[8] 免责与只读声明');
   const body = await evaluate("document.body.innerText");

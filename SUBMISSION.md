@@ -76,8 +76,8 @@
 - [x] **Star 按钮指向真实仓库**：`data.js` 里 `CONFIG.REPO_URL` 已填，
       `REPO_READY: true`（页面上「地址待填」角标已消失）
 - [x] `README.md` / `SUBMISSION.md` 里的占位符已全部替换为 `dachengzi6661`
-- [ ] **Pages 未开启**（这一步留给你：Settings → Pages → Source 选 `main` / root）
-- [ ] 开启后确认 `https://dachengzi6661.github.io/mcd-hidden-menu-lab/` 能打开
+- [x] **Pages 已开启**：<https://dachengzi6661.github.io/mcd-hidden-menu-lab/>（构建状态 built）
+- [x] 线上资源返回 200，且用无头浏览器跑完整套交互验收 35 条全绿
 
 ### 官方规则对照
 

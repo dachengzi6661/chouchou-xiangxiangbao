@@ -2,6 +2,8 @@
 
 > 官方菜单没有的，咱们自己拼出来。
 
+**在线体验（演示版）**：<https://dachengzi6661.github.io/mcd-hidden-menu-lab/>
+
 从一家门店**真实在售**的单品里挑 2–4 个，拼一个官方菜单上没有的「隐藏款」：算出总价和热量，起一个抽象谐音名字，渲染一张能直接发朋友圈的海报，再投个票上「今日最离谱 / 今日最划算」双榜。
 
 个人参赛作品 · 非麦当劳官方产品。餐品信息、价格与供应状态以麦当劳官方渠道为准。
@@ -48,8 +50,9 @@ npx serve .
 
 - 无构建、无 CDN、无 npm 依赖，`file://` 双击即可运行
 - 商品图是外链（`menu-img.mcd.cn`），离线时自动降级为文字占位，不影响任何功能
-- 部署到 GitHub Pages：仓库 Settings → Pages → Source 选 `main` / root，即可得到
-  `https://dachengzi6661.github.io/mcd-hidden-menu-lab/`
+- 本仓库已部署到 GitHub Pages：<https://dachengzi6661.github.io/mcd-hidden-menu-lab/>
+- 想自己搭一份：Settings → Pages → Source 选 `main` / root，即可得到
+  `https://<你的用户名>.github.io/mcd-hidden-menu-lab/`
 
 ### 真实版（WorkBuddy Skill）
 
