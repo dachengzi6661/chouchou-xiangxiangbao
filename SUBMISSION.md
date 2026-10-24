@@ -6,7 +6,7 @@
 
 ## 一、提交说明（可直接粘到报名 Issue 正文）
 
-作品为麦门隐藏菜单实验室：用户从真实在售单品中选 2 到 4 个拼 DIY 隐藏款，系统算出总价和热量，生成抽象谐音名字和海报，并可投票。附上的 Pages 链接为演示版，用于快速体验玩法；附上的录屏展示了真实 MCP 调用过程；仓库里的 WorkBuddy Skill 版为真实调用版。
+作品为抽抽想香堡：用户从真实在售单品中选 2 到 4 个拼 DIY 隐藏款，系统算出总价和热量，生成抽象谐音名字和海报，并可投票。附上的 Pages 链接为演示版，用于快速体验玩法；附上的录屏展示了真实 MCP 调用过程；仓库里的 WorkBuddy Skill 版为真实调用版。
 
 ### 在哪提交
 
@@ -21,7 +21,7 @@
 **标题**：
 
 ```text
-【参赛申请】麦门隐藏菜单实验室
+【参赛申请】抽抽想香堡
 ```
 
 **正文**：
@@ -29,11 +29,11 @@
 ```text
 【参赛申请】
 
-项目名称：麦门隐藏菜单实验室
+项目名称：抽抽想香堡
 
-项目地址：https://github.com/dachengzi6661/mcd-hidden-menu-lab
+项目地址：https://github.com/dachengzi6661/chouchou-xiangxiangbao
 
-项目简介：从门店真实在售单品里选 2–4 个拼成官方没有的隐藏款，用 calculate-price 官方核价、营养表求和算热量，生成抽象谐音名字与可截图海报，还能投票上双榜。演示版零配置在线体验，Skill 版真实调用 MCP，全程只读不下单。
+项目简介：不做下单，只做玩梗。从门店真实在售单品里选 2–4 个本地拼成官方没有的隐藏款，用 calculate-price 官方核价、营养表求和算热量，再按「取词→谐音→句式」起个抽象名并出海报，可投票进「最离谱 / 最划算」双榜。演示版零配置在线体验，Skill 版真实调 MCP，全程只读不下单。
 ```
 
 ### 提交后
@@ -47,15 +47,15 @@
 如果要在别处填更完整的介绍，用这段：
 
 ```text
-作品为麦门隐藏菜单实验室：用户从真实在售单品中选 2 到 4 个拼 DIY 隐藏款，系统算出总价和热量，生成抽象谐音名字和海报，并可投票。附上的 Pages 链接为演示版，用于快速体验玩法；附上的录屏展示了真实 MCP 调用过程；仓库里的 WorkBuddy Skill 版为真实调用版。
+作品为抽抽想香堡：用户从真实在售单品中选 2 到 4 个拼 DIY 隐藏款，系统算出总价和热量，生成抽象谐音名字和海报，并可投票。附上的 Pages 链接为演示版，用于快速体验玩法；附上的录屏展示了真实 MCP 调用过程；仓库里的 WorkBuddy Skill 版为真实调用版。
 ```
 
 配套链接：
 
 | 项 | 值 |
 |---|---|
-| 仓库 | `https://github.com/dachengzi6661/mcd-hidden-menu-lab` |
-| Pages（演示版） | `https://dachengzi6661.github.io/mcd-hidden-menu-lab/` |
+| 仓库 | `https://github.com/dachengzi6661/chouchou-xiangxiangbao` |
+| Pages（演示版） | `https://dachengzi6661.github.io/chouchou-xiangxiangbao/` |
 | 录屏 | `<B 站 / 腾讯视频 / 网盘 链接>` |
 
 ---
@@ -104,12 +104,12 @@
 
 ### 仓库状态
 
-- [x] 公开可访问 —— <https://github.com/dachengzi6661/mcd-hidden-menu-lab>
+- [x] 公开可访问 —— <https://github.com/dachengzi6661/chouchou-xiangxiangbao>
 - [x] 仓库创建时间在 **2025-12-25 00:00 ~ 2026-10-25 23:59** 之间（2026-10-24 创建）
 - [x] **Star 按钮指向真实仓库**：`data.js` 里 `CONFIG.REPO_URL` 已填，
       `REPO_READY: true`（页面上「地址待填」角标已消失）
 - [x] `README.md` / `SUBMISSION.md` 里的占位符已全部替换为 `dachengzi6661`
-- [x] **Pages 已开启**：<https://dachengzi6661.github.io/mcd-hidden-menu-lab/>（构建状态 built）
+- [x] **Pages 已开启**：<https://dachengzi6661.github.io/chouchou-xiangxiangbao/>（构建状态 built）
 - [x] 线上资源返回 200，且用无头浏览器跑完整套交互验收 35 条全绿
 
 ### 官方规则对照

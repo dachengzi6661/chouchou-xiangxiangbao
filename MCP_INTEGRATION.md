@@ -160,7 +160,7 @@ export MCD_MCP_URL="<官方端点>"
 export MCD_MCP_TOKEN="<你的 Token>"
 
 # 3. 装 Skill 目录
-cp -r skill ~/.workbuddy/skills/mcd-hidden-menu-lab
+cp -r skill ~/.workbuddy/skills/chouchou-xiangxiangbao
 
 # 4. 验证（不联网，只验证命名与渲染链路）
 node skill/scripts/compose.js skill/examples/combo.example.json ./out

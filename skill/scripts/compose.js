@@ -168,8 +168,8 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
   <rect width="1080" height="1440" fill="url(#glowY)"/>
   <rect width="1080" height="1440" fill="url(#glowR)"/>
 
-  <text x="80" y="116" font-size="30" font-weight="800" fill="${C.yellow}">麦门隐藏菜单实验室</text>
-  <text x="80" y="154" font-size="22" fill="rgba(246,238,227,.46)">MCD HIDDEN MENU LAB · SKILL EDITION</text>
+  <text x="80" y="116" font-size="30" font-weight="800" fill="${C.yellow}">抽抽想香堡</text>
+  <text x="80" y="154" font-size="22" fill="rgba(246,238,227,.46)">CHOUCHOU XIANGXIANGBAO · SKILL EDITION</text>
   <text x="1000" y="116" font-size="22" font-weight="700" fill="rgba(255,199,44,.72)" text-anchor="end">#${L.shortId(L.comboKey(codes))}</text>
   <line x1="80" y1="196" x2="1000" y2="196" stroke="rgba(255,199,44,.22)"/>
 

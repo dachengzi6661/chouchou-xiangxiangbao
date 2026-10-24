@@ -51,7 +51,7 @@ function getJSON(url) {
 }
 
 (async () => {
-  const userDir = path.join(require('os').tmpdir(), 'mcdlab-chrome-' + Date.now());
+  const userDir = path.join(require('os').tmpdir(), 'chouchou-chrome-' + Date.now());
   const chrome = spawn(CHROME, [
     '--headless=new',
     '--remote-debugging-port=' + PORT,
@@ -144,6 +144,8 @@ function getJSON(url) {
     await sleep(250);
   }
   ok(ready, '16 张单品卡渲染完成');
+  ok(await evaluate("document.title") === '抽抽想香堡 · 用户 DIY 隐藏款生成器', '页签标题为抽抽想香堡');
+  ok(await evaluate("document.querySelector('.brand b').textContent") === '抽抽想香堡', '页面品牌为抽抽想香堡');
   ok(errors.length === 0, '无未捕获异常', errors.join(' | '));
   ok(consoleMsgs.length === 0, '无 console.error / 资源错误', consoleMsgs.slice(0, 3).join(' | '));
 
@@ -182,7 +184,7 @@ function getJSON(url) {
   await sleep(80);
   await evaluate(`['1100','1440','4810'].forEach(c=>document.querySelector('.card[data-code="'+c+'"]').click())`);
   await sleep(120);
-  await evaluate(`document.getElementById('btnGenerate').click()`);
+  await evaluate(`window.__posterText=[]; const originalFillText=CanvasRenderingContext2D.prototype.fillText; CanvasRenderingContext2D.prototype.fillText=function(text,...args){window.__posterText.push(String(text)); return originalFillText.call(this,text,...args);}; document.getElementById('btnGenerate').click()`);
   await sleep(700);
 
   const name = await evaluate("document.querySelector('.res-name').textContent");
@@ -210,6 +212,7 @@ function getJSON(url) {
     return {w:cv.width,h:cv.height,nonBlackRatio:nonBlack/(d.length/4000),colors:uniq.size};
   })()`);
   console.log('    · canvas ' + posterStat.w + '×' + posterStat.h + '，非黑像素占比 ' + posterStat.nonBlackRatio.toFixed(2) + '，颜色簇 ' + posterStat.colors);
+  ok(await evaluate("window.__posterText.includes('抽抽想香堡')"), '实际海报绘制使用新名称');
   ok(posterStat.h === 1440 && posterStat.w === 1080, '海报画布 1080×1440');
   ok(posterStat.nonBlackRatio > 0.5, '海报已绘制（非全黑）');
   ok(posterStat.colors > 12, '海报有层次（颜色簇 > 12）');
@@ -217,6 +220,9 @@ function getJSON(url) {
   /* 海报上的关键文字：直接检查绘制调用是否含总价/热量 */
   ok(await evaluate(`document.querySelector('.data-strip .v').textContent.includes('61.50')`), '数据条含总价 61.50');
   ok(await evaluate(`[...document.querySelectorAll('.data-strip .v')].some(e=>e.textContent.trim().startsWith('1287'))`), '数据条含热量 1287');
+
+  await evaluate(`Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:function(text){window.__copiedText=text;return Promise.resolve();}}});document.getElementById('btnCopy').click()`);
+  ok(await evaluate("window.__copiedText.includes('—— 抽抽想香堡 · 用户 DIY 款')"), '复制文案使用新名称');
 
   console.log('\n[6] 投票');
   const before = await evaluate("document.querySelector('.vote-btn .n').textContent");
@@ -235,7 +241,7 @@ function getJSON(url) {
   ok(/完全自愿/.test(starText), '明确「完全自愿」');
   ok(/不影响玩法与投票/.test(starText), '明确不影响投票');
   const href = await evaluate("document.querySelector('.star a.go').getAttribute('href')");
-  ok(/^https:\/\/github\.com\//.test(href), 'Star 链接指向 GitHub 且为占位地址', href);
+  ok(href === 'https://github.com/dachengzi6661/chouchou-xiangxiangbao', 'Star 链接指向新仓库', href);
   ok(await evaluate("document.querySelector('.star a.go').getAttribute('target')") === '_blank', '新窗口打开、不打断玩法');
   ok(await evaluate("!document.querySelector('.star .warn')"), '「地址待填」角标已消失（REPO_READY=true）');
 
@@ -267,6 +273,12 @@ function getJSON(url) {
   await send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 2, mobile: true });
   await sleep(400);
   await shot('05-mobile.png', 390, 844);
+
+  for (const width of [1440,1280,1024,820,375]) {
+    await send('Emulation.setDeviceMetricsOverride', {width,height:900,deviceScaleFactor:1,mobile:false});
+    const overflow=await evaluate("document.documentElement.scrollWidth-document.documentElement.clientWidth");
+    ok(overflow===0, '宽度 '+width+' 无横向溢出', String(overflow));
+  }
 
   console.log('\n[10] 页面错误复查');
   ok(errors.length === 0, '全流程无未捕获异常', errors.join(' | '));

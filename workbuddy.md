@@ -1,6 +1,6 @@
 # WorkBuddy 开发对话记录
 
-> **项目**：麦门隐藏菜单实验室（MCD Hidden Menu Lab）
+> **项目**：抽抽想香堡（CHOUCHOU XIANGXIANGBAO）
 > **开发时间**：2026-10-24 18:54 – 20:16（GMT+8）
 > **使用工具**：腾讯 WorkBuddy（Agent 模式）+ 麦当劳 `mcd-mcp`
 > **说明**：本文件按轮次记录本次开发对话 —— 用户原话、每一步执行动作、关键产出与踩坑。
@@ -17,7 +17,7 @@
 | 18:54 | 开始 |
 | 18:55 | 用 mcd-mcp 跑通 5 个只读工具，产出实测报告（字段缺失/类型差异清单） |
 | 19:03 | 补充 16 个单品的详情名与逐项算价，为前端固化数据 |
-| 19:20 | 网页版「麦门隐藏菜单实验室」跑通（逻辑 38 条 + 浏览器 35 条断言） |
+| 19:20 | 网页版「抽抽想香堡」跑通（逻辑 38 条 + 浏览器 35 条断言） |
 | 19:28 | 按用户要求做 UI 减法：删掉 8 处次要标签与说明 |
 | 19:31 | 删掉命名链路与「数据账本」两块内部说明 |
 | 19:41 | 接入用户提供的 `name-bank.md` 抽象谐音名字库 |
@@ -26,8 +26,8 @@
 | 20:12 | GitHub Pages 上线 |
 
 最终产物：
-- 线上演示：<https://dachengzi6661.github.io/mcd-hidden-menu-lab/>
-- 仓库：<https://github.com/dachengzi6661/mcd-hidden-menu-lab>
+- 线上演示：<https://dachengzi6661.github.io/chouchou-xiangxiangbao/>
+- 仓库：<https://github.com/dachengzi6661/chouchou-xiangxiangbao>
 
 ---
 
@@ -56,7 +56,7 @@
 
 ---
 
-### 第 2 轮 · 做网页版「麦门隐藏菜单实验室」
+### 第 2 轮 · 做网页版「抽抽想香堡」
 
 **用户**：给了一整套硬规则 —— 只能从真实在售单品里选 2–4 个；总价以 `calculate-price` 为准；热量按营养表求和、缺失标未知；名字要够抽象够谐音；生成可截图海报；投票 + 双榜；Star 引导必须完全自愿；**解析规则按实测写死，不要按文档想当然**。
 
@@ -203,7 +203,7 @@ ok(await evaluate("!document.querySelector('.ledger') && !document.querySelector
 线上验收：
 
 ```bash
-PAGE_URL="https://dachengzi6661.github.io/mcd-hidden-menu-lab/" CHROME_BIN="<chrome>" node test-browser.js
+PAGE_URL="https://dachengzi6661.github.io/chouchou-xiangxiangbao/" CHROME_BIN="<chrome>" node test-browser.js
 # → 通过 35 / 35，console.error：无
 ```
 
@@ -219,7 +219,7 @@ node scripts/check-secrets.js
 ## 5. 产物清单
 
 ```
-mcd-hidden-menu-lab/
+chouchou-xiangxiangbao/
 ├── index.html / data.js / logic.js / app.js    演示版
 ├── skill/SKILL.md + scripts/compose.js         真实版（WorkBuddy Skill）
 ├── test.js / test-browser.js                   自测

@@ -428,11 +428,11 @@
     ctx.textBaseline = 'alphabetic';
     setFont(ctx, 30, 800);
     ctx.fillStyle = '#FFC72C';
-    ctx.fillText('麦门隐藏菜单实验室', 80, 116);
+    ctx.fillText('抽抽想香堡', 80, 116);
 
     setFont(ctx, 22, 400, false);
     ctx.fillStyle = 'rgba(246,238,227,.46)';
-    ctx.fillText('MCD HIDDEN MENU LAB  ·  USER-MADE COMBO', 80, 154);
+    ctx.fillText('CHOUCHOU XIANGXIANGBAO  ·  USER-MADE COMBO', 80, 154);
 
     setFont(ctx, 22, 700, false);
     ctx.fillStyle = 'rgba(255,199,44,.72)';
@@ -600,7 +600,7 @@
         var url = URL.createObjectURL(blob);
         var aEl = document.createElement('a');
         aEl.href = url;
-        aEl.download = 'mcd-hidden-' + (current ? current.id : 'combo') + '.png';
+        aEl.download = 'chouchou-xiangxiangbao-' + (current ? current.id : 'combo') + '.png';
         document.body.appendChild(aEl);
         aEl.click();
         document.body.removeChild(aEl);
@@ -618,7 +618,7 @@
     var txt = '【' + a.name + '】' + a.slogan + '\n' +
       '总价 ¥' + a.priceYuan + ' · 热量 ' + (a.kcalAllKnown ? a.kcal + ' 千卡' : a.kcal + ' 千卡（另有 ' + a.kcalUnknown.length + ' 项未知）') +
       ' · ' + a.codes.map(function (c) { return D.DETAIL_NAME[c]; }).join(' + ') + '\n' +
-      '—— 麦门隐藏菜单实验室 · 用户 DIY 款，非官方产品名';
+      '—— 抽抽想香堡 · 用户 DIY 款，非官方产品名';
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(txt).then(function () { toast('文案已复制'); },
         function () { fallbackCopy(txt); });

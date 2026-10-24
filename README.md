@@ -1,14 +1,16 @@
-# 麦门隐藏菜单实验室 · MCD Hidden Menu Lab
+# 抽抽想香堡
+
+<sub>CHOUCHOU XIANGXIANGBAO</sub>
 
 > 官方菜单没有的，咱们自己拼出来。
 
-**在线体验（演示版）**：<https://dachengzi6661.github.io/mcd-hidden-menu-lab/>
+**在线体验（演示版）**：<https://dachengzi6661.github.io/chouchou-xiangxiangbao/>
 
 从一家门店**真实在售**的单品里挑 2–4 个，拼一个官方菜单上没有的「隐藏款」：算出总价和热量，起一个抽象谐音名字，渲染一张能直接发朋友圈的海报，再投个票上「今日最离谱 / 今日最划算」双榜。
 
 个人参赛作品 · 非麦当劳官方产品。餐品信息、价格与供应状态以麦当劳官方渠道为准。
 
-![麦门隐藏菜单实验室 · 首页](docs/home.png)
+![抽抽想香堡 · 首页](docs/home.png)
 
 ---
 
@@ -42,17 +44,17 @@
 ### 演示版（零依赖，30 秒）
 
 ```bash
-git clone https://github.com/dachengzi6661/mcd-hidden-menu-lab.git
-cd mcd-hidden-menu-lab
+git clone https://github.com/dachengzi6661/chouchou-xiangxiangbao.git
+cd chouchou-xiangxiangbao
 # 直接双击 index.html，或起个静态服务：
 npx serve .
 ```
 
 - 无构建、无 CDN、无 npm 依赖，`file://` 双击即可运行
 - 商品图是外链（`menu-img.mcd.cn`），离线时自动降级为文字占位，不影响任何功能
-- 本仓库已部署到 GitHub Pages：<https://dachengzi6661.github.io/mcd-hidden-menu-lab/>
+- 本仓库已部署到 GitHub Pages：<https://dachengzi6661.github.io/chouchou-xiangxiangbao/>
 - 想自己搭一份：Settings → Pages → Source 选 `main` / root，即可得到
-  `https://<你的用户名>.github.io/mcd-hidden-menu-lab/`
+  `https://<你的用户名>.github.io/chouchou-xiangxiangbao/`
 
 ### 真实版（WorkBuddy Skill）
 
@@ -62,7 +64,7 @@ npx serve .
    export MCD_MCP_URL="<官方文档给出的 MCP 端点>"
    export MCD_MCP_TOKEN="<你自己的 Token>"
    ```
-3. 把 `skill/` 整个目录放进 `~/.workbuddy/skills/mcd-hidden-menu-lab/`
+3. 把 `skill/` 整个目录放进 `~/.workbuddy/skills/chouchou-xiangxiangbao/`
 4. 在 WorkBuddy 里说：「帮我在楼下的麦当劳拼一个隐藏款，要 3 个单品的」
 
 > ⚠️ 不同客户端（WorkBuddy / Claude Desktop / 其他 MCP Client）的配置字段略有差异，以官方接入指南为准；示例文件里只有环境变量占位符，**不要**把真实值写进去再 commit。
@@ -130,7 +132,7 @@ node skill/scripts/compose.js skill/examples/combo.example.json ./out
 ## 项目结构
 
 ```
-mcd-hidden-menu-lab/
+chouchou-xiangxiangbao/
 ├── index.html                  # 演示版页面（结构 + 全部样式）
 ├── data.js                     # 真实接口返回的快照：门店/菜单/详情名/算价/营养表原串
 ├── logic.js                    # 纯函数：营养解析、算价、热量、命名引擎、榜单
