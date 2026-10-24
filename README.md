@@ -147,6 +147,7 @@ mcd-hidden-menu-lab/
 ├── MCP_INTEGRATION.md          # 用了哪些 MCP 工具、调用流程、业务价值
 ├── CONTEST_DECLARATION.md      # 参赛声明（官方原文，未改动）
 ├── mcp-config.example.json     # 脱敏配置示例（仅环境变量占位符）
+├── workbuddy.md                # 本次开发的对话记录（选填材料，冲专项奖时提交）
 ├── SUBMISSION.md               # 提交说明与 30 秒录屏脚本（给自己看的清单）
 └── .gitignore                  # 排除本地真实配置
 ```
