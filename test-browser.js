@@ -118,6 +118,22 @@ function getJSON(url) {
     return r.result.value;
   }
 
+  async function reloadReady() {
+    await send('Page.reload', {ignoreCache:true});
+    for (let i=0;i<60;i++) {
+      await sleep(100);
+      try { if(await evaluate("document.querySelectorAll('#menuGrid .card').length===16 && !!document.getElementById('boardAbsurd').children.length")) return; }
+      catch(e) { /* navigating */ }
+    }
+    throw new Error('Reload did not become ready');
+  }
+
+  async function generateCombo(codes) {
+    await evaluate("document.getElementById('btnClear').click()");
+    await evaluate(JSON.stringify(codes)+".forEach(c=>document.querySelector('.card[data-code=\"'+c+'\"]').click());document.getElementById('btnGenerate').click()");
+    await sleep(150);
+  }
+
   async function shot(name, w, h, clip) {
     await send('Emulation.setDeviceMetricsOverride', { width: w, height: h, deviceScaleFactor: 1, mobile: false });
     await sleep(280);
@@ -146,6 +162,7 @@ function getJSON(url) {
   ok(ready, '16 张单品卡渲染完成');
   ok(await evaluate("document.title") === '抽抽想香堡 · 用户 DIY 隐藏款生成器', '页签标题为抽抽想香堡');
   ok(await evaluate("document.querySelector('.brand b').textContent") === '抽抽想香堡', '页面品牌为抽抽想香堡');
+  ok(await evaluate("MCDLogic.NAMING_VERSION") === 'v2-20261024', '实际加载 V2 命名引擎');
   ok(errors.length === 0, '无未捕获异常', errors.join(' | '));
   ok(consoleMsgs.length === 0, '无 console.error / 资源错误', consoleMsgs.slice(0, 3).join(' | '));
 
@@ -193,6 +210,7 @@ function getJSON(url) {
   console.log('    · 口号：' + slogan);
   ok(!!name && name.length >= 3, '生成了名字');
   ok(!!slogan && slogan.length >= 6, '生成了口号');
+  ok(name === await evaluate("MCDLogic.generateName(['1100','1440','4810']).name"), '新作品使用新版确定性命名');
   ok(await evaluate("!!document.querySelector('.result:not(.hidden)')"), '结果区已展示');
   ok(await evaluate("!document.querySelector('.res-chain')"), '命名推导链路不展示给用户');
   ok(await evaluate("!document.querySelector('.ledger') && !document.querySelector('details.sheet')"), '数据账本不展示给用户');
@@ -213,6 +231,9 @@ function getJSON(url) {
   })()`);
   console.log('    · canvas ' + posterStat.w + '×' + posterStat.h + '，非黑像素占比 ' + posterStat.nonBlackRatio.toFixed(2) + '，颜色簇 ' + posterStat.colors);
   ok(await evaluate("window.__posterText.includes('抽抽想香堡')"), '实际海报绘制使用新名称');
+  // 标题允许按宽度换行；拼接真实绘制片段，仍能发现截字或使用其他名字。
+  ok(await evaluate("window.__posterText.join('').includes(document.querySelector('.res-name').textContent)"), '海报与结果使用相同餐名');
+  ok(await evaluate("!window.__posterText.includes(document.querySelector('.res-name').textContent.slice(-1))"), '海报标题末字不会孤立成行');
   ok(posterStat.h === 1440 && posterStat.w === 1080, '海报画布 1080×1440');
   ok(posterStat.nonBlackRatio > 0.5, '海报已绘制（非全黑）');
   ok(posterStat.colors > 12, '海报有层次（颜色簇 > 12）');
@@ -223,6 +244,7 @@ function getJSON(url) {
 
   await evaluate(`Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:function(text){window.__copiedText=text;return Promise.resolve();}}});document.getElementById('btnCopy').click()`);
   ok(await evaluate("window.__copiedText.includes('—— 抽抽想香堡 · 用户 DIY 款')"), '复制文案使用新名称');
+  ok(await evaluate("window.__copiedText.includes(document.querySelector('.res-name').textContent) && window.__copiedText.includes(document.querySelector('.res-slogan').textContent)"), '复制的名字和口号与结果一致');
 
   console.log('\n[6] 投票');
   const before = await evaluate("document.querySelector('.vote-btn .n').textContent");
@@ -280,7 +302,44 @@ function getJSON(url) {
     ok(overflow===0, '宽度 '+width+' 无横向溢出', String(overflow));
   }
 
-  console.log('\n[10] 页面错误复查');
+  console.log('\n[10] 名称快照与刷新');
+  const storedBefore=await evaluate("JSON.parse(localStorage.getItem('mcdlab.ledger.v1')).find(e=>e.key===MCDLogic.comboKey(['1100','1440','4810']))");
+  ok(storedBefore.naming.name===name && storedBefore.naming.version==='v2-20261024', '保存新作品的名字和词库版本');
+  await reloadReady();
+  await generateCombo(['1100','1440','4810']);
+  ok(await evaluate("document.querySelector('.res-name').textContent")===name, '刷新后新作品名字不变');
+  ok(await evaluate("document.querySelector('.vote-btn').disabled")===true, '刷新后保留已投状态');
+  ok(Number(await evaluate("document.querySelector('.vote-btn .n').textContent"))===storedBefore.votes, '刷新后票数不变');
+
+  await generateCombo(['9900008754','9900008751','3505']);
+  ok(!/堡/.test(await evaluate("document.querySelector('.res-name').textContent")), '纯甜品饮品组合不会命名成汉堡');
+  ok(/麦旋风|可乐|红茶/.test(await evaluate("document.querySelector('.res-name').textContent")), '甜品饮品保留完整食物词');
+
+  console.log('\n[11] 原有作品升级');
+  await evaluate(`(()=>{const key=MCDLogic.comboKey(['1100','1440','4810']);localStorage.setItem('mcdlab.ledger.v1',JSON.stringify([{key,codes:['1100','1440','4810'],votes:42,mine:true}]));localStorage.setItem('mcdlab.voted.v1',JSON.stringify({[key]:1}));})()`);
+  await reloadReady();
+  await generateCombo(['1100','1440','4810']);
+  ok(await evaluate("document.querySelector('.res-name').textContent")==='薛定谔的聚堡', '无版本的老作品还原旧餐名');
+  ok(Number(await evaluate("document.querySelector('.vote-btn .n').textContent"))===42, '迁移不会清空或增加原有票数');
+  ok(await evaluate("document.querySelector('.vote-btn').disabled")===true, '迁移保留原有已投状态');
+  ok(await evaluate("document.querySelector('#boardAbsurd .nm').textContent.includes('薛定谔的聚堡')"), '老作品结果与榜单名称一致');
+  ok(await evaluate("JSON.parse(localStorage.getItem('mcdlab.ledger.v1'))[0].naming.version")==='legacy-v1', '迁移后持久保存旧版名称快照');
+  await reloadReady();
+  await generateCombo(['1100','1440','4810']);
+  ok(await evaluate("document.querySelector('.res-name').textContent")==='薛定谔的聚堡', '再次刷新仍保留老名字');
+
+  console.log('\n[12] 本地生成开销与存储降级');
+  const perf=await evaluate(`(()=>{const codes=['1100','1440','4810'];const start=performance.now();for(let i=0;i<1000;i++)MCDLogic.generateName(codes);return (performance.now()-start)/1000;})()`);
+  console.log('    · Chrome 单次命名平均 '+perf.toFixed(3)+' ms（1000 次）');
+  ok(perf<5, '单次本地命名低于 5ms 预算', String(perf));
+  await send('Page.addScriptToEvaluateOnNewDocument',{source:"Object.defineProperty(window,'localStorage',{configurable:true,get(){throw new Error('storage disabled for test');}});"});
+  await reloadReady();
+  await generateCombo(['1600','3505']);
+  ok(/鱼堡|红茶/.test(await evaluate("document.querySelector('.res-name').textContent")), '存储不可用时仍能生成新版名字');
+  await evaluate("document.querySelector('.vote-btn').click()");
+  ok(Number(await evaluate("document.querySelector('.vote-btn .n').textContent"))===1, '存储不可用时可在内存中完成投票');
+
+  console.log('\n[13] 页面错误复查');
   ok(errors.length === 0, '全流程无未捕获异常', errors.join(' | '));
   console.log('    · console.error：' + (consoleMsgs.length ? consoleMsgs.slice(0, 3).join(' | ') : '无'));
 

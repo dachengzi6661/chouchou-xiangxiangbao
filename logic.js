@@ -327,7 +327,7 @@
    * 返回 { name, slogan, templateId, templateLabel, a, b, aRaw, bRaw, steps }
    *   steps 用于在页面上展示"取词 → 谐音 → 句式"的三步推导
    */
-  function generateName(codes, nameMap) {
+  function generateLegacyName(codes, nameMap) {
     var NM = nameMap || D.DETAIL_NAME;      // 真实版可传入任意门店的"code → 详情名"表
     var key = comboKey(codes);
     var rng = makeRng(hash32(key) || 1);
@@ -390,6 +390,7 @@
     var slogan = SLOGANS[Math.floor(rng.next() * SLOGANS.length)](aRaw, bRaw);
 
     return {
+      version: 'legacy-v1',
       name: name,
       slogan: slogan,
       templateId: tpl.id,
@@ -407,6 +408,172 @@
     };
   }
 
+  /* V2：完整食物词 + 有条件的梗句式。旧代码仅用于冻结升级前的作品。 */
+  var NAMING_VERSION = 'v2-20261024';
+  var TREND_SOURCES = [
+    { id: 'rules-202610', label: '先把规矩立住', freshness: 'recent',
+      verifiedAt: '2026-10-24', publishedAt: '2026-10-19',
+      url: 'https://lmtw.com/mzw/content/detail/id/259150' },
+    { id: 'theory-202610', label: '生活小事理论化', freshness: 'recent',
+      verifiedAt: '2026-10-24', publishedAt: '2026-10-08',
+      url: 'https://m.dzplus.dzng.com/share/general/0/NEWS3732476KCTNMIRNUXMLB' },
+    { id: 'laoji-evergreen', label: '爱你老己', freshness: 'evergreen',
+      verifiedAt: '2026-10-24', publishedAt: '2025-12-31',
+      url: 'https://www.jfdaily.com/wx/detail.do?id=1045035' }
+  ];
+
+  function foodProfile(codes, nameMap) {
+    var names = nameMap || D.DETAIL_NAME;
+    var foods = codes.slice().sort().map(function (code) {
+      // 自定义详情名具有最高优先级；不按旧 code 猜新门店的商品。
+      var raw = String(names[code] || '').replace(/[<>&"']/g, '').trim();
+      var tags = [], word = '', rank = 2;
+      var burger = /堡|巨无霸|不素之霸|麦香鸡|麦香鱼/.test(raw);
+      if (burger) { tags.push('burger'); rank = 5; }
+      if (/鸡/.test(raw)) tags.push('chicken');
+      if (/鱼/.test(raw)) tags.push('fish');
+      if (/吉士|芝士/.test(raw)) tags.push('cheese');
+      if (/辣/.test(raw)) tags.push('spicy');
+      if (/薯条/.test(raw)) { word = '薯条'; tags.push('fries'); rank = 4; }
+      else if (/麦旋风/.test(raw)) { word = '麦旋风'; tags.push('dessert', 'mcflurry'); rank = 3; }
+      else if (/圆筒|甜筒/.test(raw)) { word = '甜筒'; tags.push('dessert', 'cone'); rank = 3; }
+      else if (/冰淇淋/.test(raw)) { word = '冰淇淋'; tags.push('dessert'); rank = 3; }
+      else if (burger) {
+        word = /吉士|芝士/.test(raw) ? '吉士堡' : /巨无霸/.test(raw) ? '巨无霸' :
+          /板烧/.test(raw) ? '板烧鸡堡' : /鱼/.test(raw) ? '鱼堡' :
+          /鸡/.test(raw) ? (/辣/.test(raw) ? '辣鸡堡' : /麦香鸡/.test(raw) ? '麦香鸡' : '鸡堡') :
+          /牛|不素之霸/.test(raw) ? '牛堡' : '汉堡';
+      } else if (/麦乐鸡|鸡块/.test(raw)) { word = '鸡块'; tags.push('nuggets'); rank = 4; }
+      else if (/鸡翅/.test(raw)) { word = '鸡翅'; rank = 4; }
+      else if (/鸡排/.test(raw)) { word = '鸡排'; rank = 4; }
+      else if (/玉米/.test(raw)) { word = '玉米'; tags.push('corn'); rank = 3; }
+      else if (/可乐/.test(raw)) { word = '可乐'; tags.push('drink', 'cola'); rank = 1; }
+      else if (/红茶/.test(raw)) { word = '红茶'; tags.push('drink'); rank = 1; }
+      else if (/咖啡|牛奶|豆浆|酸奶|果汁|饮料|茶/.test(raw)) {
+        word = (raw.match(/咖啡|牛奶|豆浆|酸奶|果汁|饮料|茶/) || [])[0]; tags.push('drink'); rank = 1;
+      }
+      if (!word) word = raw && !/^[\d\s_-]+$/.test(raw) && raw.length<=10 ? raw : '自选加餐';
+      return {code:code, name:raw, word:word, tags:tags, rank:rank};
+    });
+    var tags = [];
+    foods.forEach(function (f) { f.tags.forEach(function (tag) { if (tags.indexOf(tag) < 0) tags.push(tag); }); });
+    return {foods:foods, tags:tags, has:function(tag){return tags.indexOf(tag)>=0;}};
+  }
+
+  // 每个模板同时定义名字与口号。条件与词来自实际选品，禁止独立随机拼口号。
+  var NAME_RECIPES = [
+    {id:'R01', source:'rules-202610', needs:['burger','fries'], make:function(p){
+      return [p.form===0?'规矩夹薯堡':'规矩'+p.tagWord('burger').replace(/堡$/,'')+'夹薯堡','先把薯条夹住，规矩不能坏。',['夹薯堡']];}},
+    {id:'R02', source:'rules-202610', needs:[], make:function(p){
+      return [p.form===0?p.stem+'先立规矩':p.form===1?'先把'+p.stem+'安排上':p.stem+'得讲规矩','先把'+p.primary+'安排上，规矩不能坏。'];}},
+    {id:'R03', source:'rules-202610', needs:[], make:function(p){
+      return [p.stem+['有原则','别将就','不含糊'][p.form],'别的可以商量，'+p.primary+'不能少。'];}},
+    {id:'R04', source:'rules-202610', needs:[], make:function(p){
+      return [['先吃','先安排','先来点'][p.form]+p.stem,'先把'+p.primary+'吃上，再谈今天的规矩。'];}},
+    {id:'R05', source:'rules-202610', needs:[], make:function(p){
+      return [p.stem+['不能少','不能落下','不许缺席'][p.form],'今天的规矩：'+p.primary+'和'+p.secondary+'都要。'];}},
+    {id:'R06', source:'rules-202610', needs:['fries'], make:function(p){
+      var other=p.primary==='薯条'?p.secondary:p.primary;
+      return ['薯条'+other+'守规矩','先吃薯条，再把'+other+'安排明白。'];}},
+    {id:'R07', source:'rules-202610', needs:['chicken'], make:function(p){
+      return [p.stem+'有底线','该有的'+p.primary+'不能少，规矩就这么定。'];}},
+    {id:'R08', source:'rules-202610', needs:[], make:function(p){
+      return [p.stem+['先到位','请就位','安排上'][p.form],'规矩先放桌上，'+p.primary+'先放面前。'];}},
+    {id:'T21', source:'theory-202610', needs:[], make:function(p){
+      return [p.stem+['理论','加餐理论','吃饭理论'][p.form],'不研究大道理，先研究'+p.primary+'和'+p.secondary+'。'];}},
+    {id:'T22', source:'theory-202610', needs:[], make:function(p){
+      return [p.stem+['加餐学','加餐公式','快乐定律'][p.form],'生活可以复杂，加餐就选'+p.primary+'。'];}},
+    {id:'T23', source:'theory-202610', needs:[], make:function(p){
+      return [p.form===0?'大口吃'+p.stem:p.form===1?'大口'+p.stem+'计划':p.stem+'大口吃','理论千千万，先把'+p.primary+'吃一半。'];}},
+    {id:'T24', source:'theory-202610', needs:[], make:function(p){
+      return [p.stem+['生活学','日常哲学','吃饭哲学'][p.form],'今天的生活理论：'+p.primary+'配'+p.secondary+'。'];}},
+    {id:'T25', source:'theory-202610', needs:[], make:function(p){
+      return [p.stem+['快乐学','快乐定律','快乐方程'][p.form],'快乐怎么定义？先从'+p.primary+'开始。'];}},
+    {id:'T26', source:'theory-202610', needs:['chicken','fries'], make:function(p){
+      return [p.form===0?'鸡薯理论':p.tagWord('chicken')+'薯条'+['理论','学说','定律'][p.form],'理论先放一边，鸡薯先吃一遍。',['鸡','薯']];}},
+    {id:'T27', source:'theory-202610', needs:['cheese'], make:function(p){
+      return [p.form===0?'吉士加餐理论':'吉士'+p.withoutTag('cheese')+'加餐理论','先把吉士加上，难题明天再想。',['吉士']];}},
+    {id:'T28', source:'theory-202610', needs:[], make:function(p){
+      return [p.form===0?'今日'+p.stem+'学说':p.form===1?'今天研究'+p.stem:'关于'+p.stem+'的理论','理论还在研究，'+p.primary+'已经就位。'];}},
+    {id:'L01', source:'laoji-evergreen', needs:['cone'], make:function(){
+      return ['爱你老己甜筒','给老己加点甜，今天也值得被照顾。',['甜筒']];}},
+    {id:'L02', source:'laoji-evergreen', needs:['mcflurry'], make:function(){
+      return ['老己麦旋风','给老己一点甜，今天先不内耗。',['麦旋风']];}},
+    {id:'L03', source:'laoji-evergreen', needs:[], make:function(p){
+      return [['老己的','老己今天吃','老己点了'][p.form]+p.stem,'忙了一天，给老己安排'+p.primary+'和'+p.secondary+'。'];}},
+    {id:'L04', source:'laoji-evergreen', needs:[], make:function(p){
+      return [p.stem+['犒劳局','犒劳时间','犒劳餐'][p.form],'今天辛苦了，老己先吃'+p.primary+'。'];}},
+    {id:'L05', source:'laoji-evergreen', needs:[], make:function(p){
+      return [p.form===0?p.stem+'宠己餐':p.form===1?'给老己'+p.stem:'老己加餐'+p.stem,'爱你老己，'+p.primary+'这份留给自己。'];}},
+    {id:'L06', source:'laoji-evergreen', needs:[], make:function(p){
+      return [['老己请吃','今天老己吃','老己先吃'][p.form]+p.stem,'不等特别的日子，今天就请老己吃'+p.primary+'。'];}},
+    {id:'O01', source:'original', needs:[], make:function(p){
+      return [p.stem+['搭个伴','碰个头','一起吃'][p.form],p.primary+'碰上'+p.secondary+'，今天一起加餐。'];}},
+    {id:'O02', source:'original', needs:[], make:function(p){
+      return [p.stem+['见面会','快乐碰头','一起到位'][p.form],'让'+p.primary+'和'+p.secondary+'见一面，快乐就齐了。'];}},
+    {id:'O03', source:'original', needs:[], make:function(p){
+      return [p.stem+['快乐餐','开心餐','快乐加餐'][p.form],'把'+p.primary+'留给自己，把快乐留到这一口。'];}},
+    {id:'P01', source:'classic-wordplay', needs:['chicken'], make:function(p){
+      return ['鸡不可失'+p.primary,'机会可以再等，'+p.primary+'先吃一口。',['鸡',p.primary],[{from:'机',to:'鸡'}]];}}
+  ];
+
+  function generateName(codes, nameMap) {
+    if (!Array.isArray(codes) || !codes.length || codes.length > 4) throw new Error('组合需要 1–4 个单品');
+    if (new Set(codes).size !== codes.length) throw new Error('组合不能包含重复单品');
+    var profile = foodProfile(codes, nameMap);
+    var key = comboKey(codes), rng = makeRng(hash32(NAMING_VERSION + ':' + key));
+    var candidates = [];
+    NAME_RECIPES.forEach(function(recipe) {
+      if (!recipe.needs.every(function(tag){return profile.has(tag);})) return;
+      var local = makeRng(hash32(key + ':' + recipe.id));
+      var mains = profile.foods.filter(function(f){return f.rank >= 3;});
+      if (!mains.length) mains = profile.foods;
+      var first = local.pick(mains);
+      var rest = profile.foods.filter(function(f){return f.code!==first.code && f.word!==first.word;});
+      var second = rest.length ? local.pick(rest) : first;
+      // 同词不重复拼接；长商品名只保留一个完整词，避免截断中文词。
+      var stem = first.word === second.word ? first.word : first.word + second.word;
+      if (stem.length > 10) stem = first.word;
+      var pair = recipe.make({primary:first.word,secondary:second.word,stem:stem,form:local.int(0,2),
+        tagWord:function(tag){return local.pick(profile.foods.filter(function(f){return f.tags.indexOf(tag)>=0;})).word;},
+        withoutTag:function(tag){var rest=profile.foods.filter(function(f){return f.tags.indexOf(tag)<0;});return rest.length?local.pick(rest).word:'';}});
+      var words = pair[2] || [first.word, second.word];
+      if (pair[0].length < 3 || pair[0].length > 16 || !words.some(function(w){return pair[0].indexOf(w)>=0;})) return;
+      if (!profile.has('burger') && pair[0].indexOf('堡')>=0) return;
+      var swaps = pair[3] || [];
+      if (!swaps.every(function(s){return pair[0].indexOf(s.to)>=0;})) return;
+      candidates.push({recipe:recipe,pair:pair,words:words,swaps:swaps});
+    });
+    // 优先近期句式，常青与原创仍有稳定出场机会；结果由固定版本和组合键播种。
+    var recent = candidates.filter(function(c){return /202610$/.test(c.recipe.source);});
+    var selected = rng.pick(rng.next()<0.66 && recent.length ? recent : candidates);
+    if (!selected) {
+      var food = profile.foods[0].word;
+      selected = {recipe:{id:'F01',source:'original'},pair:[food+'拼搭餐','把喜欢的单品放在一起，今天好好吃饭。'],words:[food],swaps:[]};
+    }
+    return {version:NAMING_VERSION,name:selected.pair[0],slogan:selected.pair[1],
+      templateId:selected.recipe.id,templateLabel:'完整食物词 + 配对梗句式',sourceId:selected.recipe.source,
+      foodWords:selected.words.slice(),swapped:selected.swaps.slice(),
+      sources:profile.foods.map(function(f){return {code:f.code,name:f.name,k:f.word};}),
+      steps:{extract:'从实际选品识别完整食物词',homophone:selected.swaps.length?'成句谐音，保留实际替换记录':'保留完整食物词，不强制谐音',template:selected.recipe.id}};
+  }
+
+  function validNamingSnapshot(naming) {
+    return naming && typeof naming.name==='string' && naming.name.length>0 && naming.name.length<=80 &&
+      typeof naming.slogan==='string' && naming.slogan.length>0 && naming.slogan.length<=240 &&
+      !/[<>&]/.test(naming.name+naming.slogan);
+  }
+
+  function snapshotNaming(naming) {
+    if (!validNamingSnapshot(naming)) throw new Error('名称快照无效');
+    return {version:naming.version || 'legacy-v1',name:naming.name,slogan:naming.slogan,
+      templateId:naming.templateId || '',sourceId:naming.sourceId || 'legacy'};
+  }
+
+  function freezeLegacyEntry(entry) {
+    return Object.assign({},entry,{naming:snapshotNaming(validNamingSnapshot(entry.naming)?entry.naming:generateLegacyName(entry.codes))});
+  }
+
   /** 组合短编号（用于海报角落与榜单排序显示） */
   function shortId(key) {
     var h = hash32(key).toString(36).toUpperCase();
@@ -418,11 +585,11 @@
    * 四、组合整体评估
    * ======================================================================== */
 
-  function analyze(codes, index) {
+  function analyze(codes, index, storedNaming) {
     var key = comboKey(codes);
     var fen = priceFen(codes);
     var cal = calories(codes, index);
-    var nm = generateName(codes);
+    var nm = validNamingSnapshot(storedNaming) ? snapshotNaming(storedNaming) : generateName(codes);
 
     return {
       key: key,
@@ -473,7 +640,7 @@
     var enriched = entries
       .filter(function (e) { return e.votes > 0; })
       .map(function (e) {
-        var a = analyze(e.codes, index);
+        var a = analyze(e.codes, index, e.naming);
         a.votes = e.votes;
         return a;
       })
@@ -507,6 +674,12 @@
     comboKey: comboKey,
     shortId: shortId,
     generateName: generateName,
+    generateLegacyName: generateLegacyName,
+    snapshotNaming: snapshotNaming,
+    freezeLegacyEntry: freezeLegacyEntry,
+    NAMING_VERSION: NAMING_VERSION,
+    TREND_SOURCES: TREND_SOURCES,
+    NAME_RECIPES: NAME_RECIPES,
     buildBoards: buildBoards,
     SEED_ENTRIES: SEED_ENTRIES,
     hash32: hash32,

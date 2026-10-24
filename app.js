@@ -40,12 +40,18 @@
     if (raw) {
       try {
         var a = JSON.parse(raw);
-        if (Array.isArray(a) && a.length) return a;
+        if (Array.isArray(a) && a.length) {
+          // 未带名称快照的旧账本，只按原算法还原一次；票数与组合键保持原样。
+          var pinned = a.map(L.freezeLegacyEntry);
+          if (JSON.stringify(pinned) !== JSON.stringify(a)) lsSet(LS_LEDGER, JSON.stringify(pinned));
+          return pinned;
+        }
       } catch (e) { /* ignore */ }
     }
     if (memLedger) return memLedger;
     memLedger = L.SEED_ENTRIES.map(function (e) {
-      return { key: L.comboKey(e.codes), codes: e.codes.slice(), votes: e.votes, seed: true };
+      return { key: L.comboKey(e.codes), codes: e.codes.slice(), votes: e.votes, seed: true,
+        naming: L.snapshotNaming(L.generateName(e.codes)) };
     });
     return memLedger;
   }
@@ -226,11 +232,14 @@
 
   function generate() {
     if (selected.length < 2) return;
-    current = L.analyze(selected, NUT);
+    var key = L.comboKey(selected);
+    var saved = ledger.filter(function(e){return e.key===key;})[0];
+    current = L.analyze(selected, NUT, saved && saved.naming);
 
     // 生成的组合先入账（0 票），这样才能投票
     if (!ledger.some(function (e) { return e.key === current.key; })) {
-      ledger.push({ key: current.key, codes: current.codes.slice(), votes: 0, mine: true });
+      ledger.push({ key: current.key, codes: current.codes.slice(), votes: 0, mine: true,
+        naming: L.snapshotNaming(current.naming) });
       saveLedger(ledger);
     }
 
@@ -323,7 +332,8 @@
     if (voted[key]) return;
     var entry = ledger.filter(function (e) { return e.key === key; })[0];
     if (!entry) {
-      entry = { key: key, codes: current.codes.slice(), votes: 0 };
+      entry = { key: key, codes: current.codes.slice(), votes: 0,
+        naming: L.snapshotNaming(current.naming) };
       ledger.push(entry);
     }
     entry.votes += 1;
@@ -368,6 +378,8 @@
     for (var s = maxSize; s >= minSize; s -= 3) {
       setFont(ctx, s, 900);
       var lines = wrapLines(ctx, text, maxWidth);
+      // 新名字保留完整食物词，避免仅最后一两个字被挤到第二行。
+      if (lines.length>1 && lines[lines.length-1].length<3) continue;
       if (lines.length <= maxLines) {
         var w = 0;
         for (var i = 0; i < lines.length; i++) w = Math.max(w, ctx.measureText(lines[i]).width);

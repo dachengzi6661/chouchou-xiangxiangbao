@@ -76,7 +76,7 @@ const allUnknown = Object.keys(D.PRICE_FEN).filter(c => !L.calories([c], idx).al
 ok(allUnknown.length === 2, '16 个单品中恰好 2 个热量未知', JSON.stringify(allUnknown));
 
 /* ---------------- 4. 命名引擎 ---------------- */
-head('[4] 命名引擎（取词 → 谐音 → 句式）');
+head('[4] 命名引擎（完整食物词 → 有条件梗句式 → 配对口号）');
 const n1 = L.generateName(combo3);
 console.log('    三件套名字：' + n1.name + ' ｜ 口号：' + n1.slogan);
 console.log('    ' + n1.steps.extract + ' / ' + n1.steps.homophone + ' / ' + n1.steps.template);
@@ -106,31 +106,17 @@ names.forEach((n, i) => {
 ok(new Set(names.map(n => n.name)).size === names.length, '12 个组合名字互不重复',
   JSON.stringify(names.map(n => n.name)));
 const punCount = names.filter(n => n.swapped.length > 0).length;
-ok(punCount === names.length, '12 个名字全部发生了谐音替换', '有谐音的：' + punCount + '/12');
+ok(names.every(n => n.swapped.every(s => n.name.includes(s.to))), '谐音记录必须实际进入名字，允许不用谐音');
 ok(names.every(n => n.name.length <= 16), '名字长度均 ≤16 字');
 
-/* 名字库（name-bank.md）是否真的进了产出 */
-head('[4b] 名字库覆盖');
-const many = [];
-const codesAll = Object.keys(D.PRICE_FEN);
-for (let i = 0; i < codesAll.length; i++) {
-  for (let j = i + 1; j < codesAll.length; j++) {
-    many.push(L.generateName([codesAll[i], codesAll[j]]));
-  }
-}
-const byBankAbs = many.filter(n => n.name.startsWith(L.ABSTRACT.find(a => n.name.startsWith(a)) || '\u0000'));
-const usesIdiom = many.filter(n => {
-  const bases = L.IDIOM_BY_KEY[n.name.charAt(0) === '星' ? '' : ''] || [];
-  return /不可失|光乍泄|不思|你最棒|道难|堡你满意|堡罗万象|堡口福|霸王别|鸡同鸭讲|鸡飞狗跳|巨无霸道|吉士如意|辣手神探|辣么|侧漏|麦门永存|麦田守望者|香飘飘|香到离谱|薯条君/.test(n.name);
-});
-const usesSuffix = many.filter(n => /[塔卷盒]$/.test(n.name));
-ok(byBankAbs.length > 0, '有名字使用了抽象词前缀（' + L.ABSTRACT.length + ' 个池子）', '命中 ' + byBankAbs.length + ' 个');
-ok(usesIdiom.length > 0, '有名字使用了谐音成语池', '命中 ' + usesIdiom.length + ' 个');
-ok(usesSuffix.length > 0, '有名字使用了 塔/卷/盒 后缀', '命中 ' + usesSuffix.length + ' 个');
-console.log('    抽样（全部两两组合 ' + many.length + ' 个）：');
-[0, 7, 19, 33, 48, 61, 75, 88, 96, 104].forEach(i => {
-  if (many[i]) console.log('      ' + many[i].name + '   [' + many[i].templateId + ']');
-});
+/* 新词库：实际食物锚点、来源与类别条件 */
+head('[4b] 食物词与热梗覆盖');
+const many=[];const codesAll=Object.keys(D.PRICE_FEN);
+for(let i=0;i<codesAll.length;i++)for(let j=i+1;j<codesAll.length;j++)many.push(L.generateName([codesAll[i],codesAll[j]]));
+ok(many.every(n=>n.foodWords.some(word=>n.name.includes(word))), '每个名字保留可读食物词');
+ok(many.some(n=>n.sourceId==='rules-202610')&&many.some(n=>n.sourceId==='theory-202610'), '十月规矩与生活理论句式实际进入产出');
+ok(many.some(n=>n.sourceId==='laoji-evergreen'), '常青老己句式实际进入产出');
+console.log('    两两组合 '+many.length+' 组；完整 2500 组验收见 test-naming.js');
 
 /* ---------------- 5. 榜单 ---------------- */
 head('[5] 榜单');
