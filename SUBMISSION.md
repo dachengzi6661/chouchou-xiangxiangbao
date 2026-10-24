@@ -110,7 +110,7 @@
       `REPO_READY: true`（页面上「地址待填」角标已消失）
 - [x] `README.md` / `SUBMISSION.md` 里的占位符已全部替换为 `dachengzi6661`
 - [x] **Pages 已开启**：<https://dachengzi6661.github.io/chouchou-xiangxiangbao/>（构建状态 built）
-- [x] 线上资源返回 200，且用无头浏览器跑完整套交互验收 35 条全绿
+- [x] 线上资源返回 200，且用无头浏览器跑完整套交互验收 64 条全绿
 
 ### 官方规则对照
 

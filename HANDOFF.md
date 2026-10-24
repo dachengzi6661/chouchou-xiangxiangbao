@@ -9,9 +9,9 @@
 
 项目统一名称为 **抽抽想香堡**，仓库及 Pages 路径统一使用 `chouchou-xiangxiangbao`。
 
-2026-10-24 用户已明确授权：本地 HTML、GitHub 和 GitHub Pages 等全部项目名称统一改名。本地替换、截图更新、测试、GitHub 改名及 Pages 发布均已完成；2026-10-24 已在新地址通过线上验收，详细记录见第 14 节。
+2026-10-24 用户已明确授权：本地 HTML、GitHub 和 GitHub Pages 等全部项目名称统一改名。本地替换、截图更新、测试、GitHub 改名及 Pages 发布均已完成；2026-10-24 已在新地址通过线上验收，详细记录见第 14 节。命名引擎现已升级至 V2 并通过线上验收，见第 16 节。
 
-## 1. 改名范围与验收
+## 1. 改名阶段范围与验收（命名 V2 实施见第 16 节）
 
 - 页面标题、页眉、favicon、海报、复制文案、README 及截图、报名材料、Skill 名称和海报同步更新。
 - GitHub 仓库名、简介、主页链接、Git remote 和 Pages 地址同步更新。
@@ -50,11 +50,11 @@
 | 事项 | 证据 |
 |---|---|
 | 5 个 MCP 工具实测（只读） | 16 次详情 + 2 次算价，无写操作 |
-| 演示版网页 | 线上可玩，44 条 Chrome 浏览器断言全绿 |
+| 演示版网页 | 线上可玩，64 条 Chrome 浏览器断言全绿 |
 | 真实版 Skill | `skill/SKILL.md` + `compose.js` 能出 SVG 海报 |
 | 四份必需文件 | README / CONTEST_DECLARATION / MCP_INTEGRATION / mcp-config.example 全在仓库根目录 |
 | 声明文件未被改动 | 远端 raw 的 MD5 仍是 `91a7b32ec28098b609ca3f215cdf7147` |
-| 敏感信息扫描 | `node scripts/check-secrets.js` → 19 个文件 0 命中 |
+| 敏感信息扫描 | `node scripts/check-secrets.js` → 22 个文件 0 命中 |
 | Pages 部署 | 状态 `built`，index/data/logic/app 四个资源全 200 |
 | Star 按钮 | 已指向真实仓库，`REPO_READY: true`，页面无「地址待填」角标 |
 
@@ -129,7 +129,7 @@ chouchou-xiangxiangbao/
 ├── logic.js            纯函数：营养解析、算价、热量、命名引擎、榜单
 ├── app.js              交互 + Canvas 海报
 ├── test.js             逻辑自测（41 条）
-├── test-browser.js     浏览器验收（44 条，支持 PAGE_URL 测线上）
+├── test-browser.js     浏览器验收（64 条，支持 PAGE_URL 测线上）
 ├── skill/SKILL.md      真实版：WorkBuddy Skill 调用流程
 ├── skill/scripts/compose.js   组合 → 名字/总价/热量 → SVG 海报
 ├── scripts/check-secrets.js   敏感信息扫描
@@ -215,7 +215,7 @@ gh api repos/dachengzi6661/chouchou-xiangxiangbao/pages --jq .status
 
 ## 15. 2026-10-24 命名引擎评审（建议阶段）
 
-- 本次只做代码评审、全量枚举与近期热梗核验，未修改引擎、测试或线上版本；本节为本地评审记录，未提交推送。
+- 本次只做代码评审、全量枚举与近期热梗核验，未修改引擎、测试或线上版本；本节保留评审阶段的发现，后续实施见第 16 节。
 - 现有 16 个单品的全部 2–4 件组合共 2500 组，产生 2024 个不同名字；额外同名结果为 476 个，不代表组合键冲突。
 - 586 组的 swapped 记录所指替换字没有出现在最终名字中：模板会丢弃 A 或 B，不能只用 swapped.length 判断最终结果存在谐音。
 - 不含汉堡的组合 246 组，其中 63 组名字以「堡」结尾；需要按选品类别限制后缀和模板。
@@ -229,7 +229,7 @@ gh api repos/dachengzi6661/chouchou-xiangxiangbao/pages --jq .status
 
 ## 16. 命名引擎 V2（2026-10-24 实施）
 
-用户已批准第 15 节评审建议并要求开始。当前完成本地实现，尚待最终发布验收。
+用户已批准第 15 节评审建议并要求开始。当前已完成实施、提交推送与 Pages 线上验收。
 
 - 26 个带食材条件的模板；规矩 / 生活理论近期句式、常青老己与成句文字游戏。名字与口号成对，谐音可选。
 - 词库版本 `v2-20261024`；出处与核验日期见 `docs/naming-sources.md`。原算法仅供迁移旧作品，不用于新生成默认结果。
@@ -248,3 +248,10 @@ gh api repos/dachengzi6661/chouchou-xiangxiangbao/pages --jq .status
 - 本机 Chrome 1000 次命名平均 **0.016 ms/次**；仍为本地计算，页面脚本请求数量不变。
 - logic.js 从 21471 增至 34506 字节；gzip 测量从 8281 增至 12338 字节，增加 4057 字节（包含兼容旧作品的原算法）。压缩数为本地 gzip 测量，不等于实际传输编码。
 - 海报、复制与结果名称一致；五档宽度无横向溢出；老名字、原票数、已投状态经两次刷新保持；存储不可用可在内存投票。
+
+### V2 线上验收结果
+
+- 代码提交 `d3617ea76c1e2ae0ef553a5ca30d804d2eac9f25`；Pages Actions run `40097638254` 成功。
+- 显式 PAGE_URL 测线上：Chrome **64/64**，控制台 / 页面异常为 0；1000 次命名平均 **0.018 ms/次**。
+- index、data / logic / app、docs 三张 PNG、词库来源文档、官方声明均返回 200，且与本地逐字节一致；声明 MD5 保持 `91a7b32ec28098b609ca3f215cdf7147`。
+- 发布前敏感信息扫描 **22 个文件 0 命中**；报名 Issue / 表单仍未代发，原有 MCP 只读边界保持。
