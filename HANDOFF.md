@@ -9,7 +9,7 @@
 
 项目统一名称为 **抽抽想香堡**，仓库及 Pages 路径统一使用 `chouchou-xiangxiangbao`。
 
-2026-10-24 用户已明确授权：本地 HTML、GitHub 和 GitHub Pages 等全部项目名称统一改名。当前正在执行本地替换、截图更新、测试及发布；线上完成情况以最终验收记录为准。
+2026-10-24 用户已明确授权：本地 HTML、GitHub 和 GitHub Pages 等全部项目名称统一改名。本地替换、截图更新、测试、GitHub 改名及 Pages 发布均已完成；2026-10-24 已在新地址通过线上验收，详细记录见第 14 节。
 
 ## 1. 改名范围与验收
 
@@ -29,7 +29,7 @@
 | 在线演示（Pages，已 built） | <https://dachengzi6661.github.io/chouchou-xiangxiangbao/> |
 | 官方活动仓库 | <https://github.com/M-China/mcd-developer-innovation-challenge> |
 | 报名入口（新 Issue） | <https://github.com/M-China/mcd-developer-innovation-challenge/issues/new> |
-| 同类作品（撞名，务必看） | [#272](https://github.com/M-China/mcd-developer-innovation-challenge/issues/272) ｜ [#492](https://github.com/M-China/mcd-developer-innovation-challenge/issues/492) |
+| 同类作品（题材对比） | [#272](https://github.com/M-China/mcd-developer-innovation-challenge/issues/272) ｜ [#492](https://github.com/M-China/mcd-developer-innovation-challenge/issues/492) |
 
 ---
 
@@ -37,7 +37,7 @@
 
 | # | 事项 | 状态 | 备注 |
 |---|---|---|---|
-| 1 | 统一改名并推送 | 执行中 | 见第 1 节和最终验收记录 |
+| 1 | 统一改名并推送 | 已完成 | 新 Pages 已通过线上验收，见第 14 节 |
 | 2 | 录 30 秒屏 | ⬜ **已做** | 脚本在 `SUBMISSION.md` 第二节 |
 | 3 | 发报名 Issue | ⬜ **未做** | 文案见第 5 节，2026-10-24 改名前核验：本账号尚无报名 Issue |
 | 4 | 把 Issue 链接回填到报名表 | ⬜ **未做** | 表单字段「麦当劳大赛报名 Issue 链接」 |
@@ -50,11 +50,11 @@
 | 事项 | 证据 |
 |---|---|
 | 5 个 MCP 工具实测（只读） | 16 次详情 + 2 次算价，无写操作 |
-| 演示版网页 | 线上可玩，35 条浏览器断言全绿 |
+| 演示版网页 | 线上可玩，44 条 Chrome 浏览器断言全绿 |
 | 真实版 Skill | `skill/SKILL.md` + `compose.js` 能出 SVG 海报 |
 | 四份必需文件 | README / CONTEST_DECLARATION / MCP_INTEGRATION / mcp-config.example 全在仓库根目录 |
 | 声明文件未被改动 | 远端 raw 的 MD5 仍是 `91a7b32ec28098b609ca3f215cdf7147` |
-| 敏感信息扫描 | `node scripts/check-secrets.js` → 17 个文件 0 命中 |
+| 敏感信息扫描 | `node scripts/check-secrets.js` → 19 个文件 0 命中 |
 | Pages 部署 | 状态 `built`，index/data/logic/app 四个资源全 200 |
 | Star 按钮 | 已指向真实仓库，`REPO_READY: true`，页面无「地址待填」角标 |
 
@@ -129,7 +129,7 @@ chouchou-xiangxiangbao/
 ├── logic.js            纯函数：营养解析、算价、热量、命名引擎、榜单
 ├── app.js              交互 + Canvas 海报
 ├── test.js             逻辑自测（41 条）
-├── test-browser.js     浏览器验收（35 条，支持 PAGE_URL 测线上）
+├── test-browser.js     浏览器验收（44 条，支持 PAGE_URL 测线上）
 ├── skill/SKILL.md      真实版：WorkBuddy Skill 调用流程
 ├── skill/scripts/compose.js   组合 → 名字/总价/热量 → SVG 海报
 ├── scripts/check-secrets.js   敏感信息扫描
@@ -199,3 +199,16 @@ gh api repos/dachengzi6661/chouchou-xiangxiangbao/pages --jq .status
 - GitHub 改仓库名后需要同步所有仓库 / Pages 链接和本地 origin，并验证新 Pages 路径；不能依赖旧路径跳转。
 - 沙箱身份读取原目录 Git 可能出现 dubious ownership；只对当前命令指定 safe.directory，或在已授权的实际用户执行环境操作，不修改全局信任名单。
 - 本地 Chrome 浏览器测试使用项目自带 CDP 脚本，无须安装依赖。线上验收必须显式传 PAGE_URL，避免误测本地页面。
+
+- GitHub Pages 使用 Jekyll 构建时，带 YAML front matter 的 Skill Markdown 会输出为 `skill/SKILL.html`；下载原始 Skill 应使用仓库文件或 GitHub raw，不要把 Pages 的 `.md` 地址 404 误判成代码未发布。
+
+## 14. 2026-10-24 改名验收结果
+
+- 名称：抽抽想香堡；仓库：`dachengzi6661/chouchou-xiangxiangbao`；Pages：<https://dachengzi6661.github.io/chouchou-xiangxiangbao/>。
+- 改名代码提交：`d156a12f9157fdf0ff007c4e48edfd2b2ab04914`；对应 Pages Actions run `40094933712` 成功。
+- 本地逻辑测试 **41/41**；本地及新 Pages 地址 Chrome 测试均 **44/44**。覆盖页面品牌、实际海报绘制、复制文案、Star 新地址和 1440 / 1280 / 1024 / 820 / 375 五档无横向溢出。
+- 线上页面、data / logic / app 三个脚本和 docs 三张 PNG 均返回 200，内容与本地逐字节一致；Skill 的 Pages HTML 与 GitHub raw 均返回 200 且包含新名称。
+- 敏感信息扫描 **19 个文件 0 命中**；官方声明线上与本地 MD5 均为 `91a7b32ec28098b609ca3f215cdf7147`。
+- 当前工作文件、示例 SVG 和文档中的旧展示名、旧英文展示名及旧仓库路径已清除；Git 历史不重写。
+- 页面未新增请求、运行依赖或功能逻辑；仅文案、图标、仓库地址及既有截图更新，未增加运行时性能开销。
+- Git origin 已指向新仓库；报名 Issue / 表单仍待单独处理。本目录名保持不变，以便原有本地入口继续使用。
