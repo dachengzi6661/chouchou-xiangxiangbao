@@ -64,7 +64,7 @@
 
 - [x] 跑一遍 `node scripts/check-secrets.js`，必须 0 命中 —— 当前 16 个文件 0 命中
 - [x] 仓库里没有 `mcp-config.json`、`.env` 等真实配置（`.gitignore` 已覆盖）
-- [x] 没有硬编码本机路径（原来的 `C:/Users/<用户名>/…` 已改为 `CHROME_BIN` 探测）
+- [x] 没有硬编码本机绝对路径（原先写死的浏览器路径含用户名，已改成 `CHROME_BIN` 环境变量探测）
 - [ ] 历史提交里也没漏过 Token：`git log -p | grep -iE "Bearer|TOKEN"` 快速过一眼
 - [ ] 录屏里不出现 Token、邮箱、手机号、本机用户名（截图已检查过，是干净的）
 - [ ] 万一漏过：立刻去 `open.mcd.cn` 重置 Token，再用 `git filter-repo` 清历史
