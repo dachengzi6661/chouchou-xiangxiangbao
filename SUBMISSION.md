@@ -53,30 +53,31 @@
 
 ### 文件齐全（官方硬性要求，文件名一个字都不能改）
 
-- [ ] `README.md` —— 项目介绍、安装方法、使用示例、目标用户
-- [ ] `CONTEST_DECLARATION.md` —— 官方原文，**一字未改**
-- [ ] `MCP_INTEGRATION.md` —— 实际使用的 Server / Tool、调用流程、业务价值
-- [ ] `mcp-config.example.json` —— 脱敏配置，只有环境变量占位符
-- [ ] 源代码（`index.html` / `data.js` / `logic.js` / `app.js` / `skill/`）
+- [x] `README.md` —— 项目介绍、安装方法、使用示例、目标用户
+- [x] `CONTEST_DECLARATION.md` —— 官方原文，**一字未改**（MD5 `91a7b32e…`，已核对远端 raw）
+- [x] `MCP_INTEGRATION.md` —— 实际使用的 Server / Tool、调用流程、业务价值
+- [x] `mcp-config.example.json` —— 脱敏配置，只有环境变量占位符
+- [x] 源代码（`index.html` / `data.js` / `logic.js` / `app.js` / `skill/`）
 - [ ] `workbuddy.md` —— **选填**，只有想拿 WorkBuddy 专项奖励才需要（见下）
 
 ### 敏感信息
 
-- [ ] 跑一遍 `node scripts/check-secrets.js`，必须 0 命中
-- [ ] 仓库里没有 `mcp-config.json`、`.env` 等真实配置（`.gitignore` 已覆盖）
+- [x] 跑一遍 `node scripts/check-secrets.js`，必须 0 命中 —— 当前 16 个文件 0 命中
+- [x] 仓库里没有 `mcp-config.json`、`.env` 等真实配置（`.gitignore` 已覆盖）
+- [x] 没有硬编码本机路径（原来的 `C:/Users/<用户名>/…` 已改为 `CHROME_BIN` 探测）
 - [ ] 历史提交里也没漏过 Token：`git log -p | grep -iE "Bearer|TOKEN"` 快速过一眼
-- [ ] 截图 / 录屏里没有 Token、邮箱、手机号、本机用户名
+- [ ] 录屏里不出现 Token、邮箱、手机号、本机用户名（截图已检查过，是干净的）
 - [ ] 万一漏过：立刻去 `open.mcd.cn` 重置 Token，再用 `git filter-repo` 清历史
 
 ### 仓库状态
 
-- [ ] 公开可访问（Private 会被判不合格）
-- [ ] 仓库创建时间在 **2025-12-25 00:00 ~ 2026-10-25 23:59** 之间（北京时间）
-- [ ] Pages 已开启，链接能直接打开
-- [ ] **Star 按钮指向真实仓库**：改 `data.js` 里的
-      `CONFIG.REPO_URL = 'https://github.com/dachengzi6661/mcd-hidden-menu-lab'`
-      并把 `REPO_READY` 改成 `true`（改完页面上「地址待填」的角标会消失）
-- [ ] `README.md` 里的 `dachengzi6661` 全部替换掉
+- [x] 公开可访问 —— <https://github.com/dachengzi6661/mcd-hidden-menu-lab>
+- [x] 仓库创建时间在 **2025-12-25 00:00 ~ 2026-10-25 23:59** 之间（2026-10-24 创建）
+- [x] **Star 按钮指向真实仓库**：`data.js` 里 `CONFIG.REPO_URL` 已填，
+      `REPO_READY: true`（页面上「地址待填」角标已消失）
+- [x] `README.md` / `SUBMISSION.md` 里的占位符已全部替换为 `dachengzi6661`
+- [ ] **Pages 未开启**（这一步留给你：Settings → Pages → Source 选 `main` / root）
+- [ ] 开启后确认 `https://dachengzi6661.github.io/mcd-hidden-menu-lab/` 能打开
 
 ### 官方规则对照
 
